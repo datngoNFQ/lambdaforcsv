@@ -35,3 +35,10 @@ module.exports.readS3File = async (event) => {
     }
     return;
 };
+// TODO
+/**
+ * 1. count csv rows
+ * 2. after import, select count
+ * 3. compare count must === between 1 & 2
+ * 4. Return report as JSON
+ */

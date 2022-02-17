@@ -1,6 +1,7 @@
 'use strict';
 const AWS = require('aws-sdk')
 const s3 = new AWS.S3()
+const csv = require('@fast-csv/parse');
 
 module.exports.hello = async (event) => {
   return {
@@ -28,8 +29,14 @@ module.exports.readS3File = async (event) => {
         Key
     }).promise();
 
-    const s3Object = JSON.parse(data.Body)
-    console.log("s3Object", s3Object);
+    // const s3Object = JSON.parse(data.Body) -- disabled due to no more needed
+    // console.log("s3Object", s3Object); -- disabled due to no more needed
+    // -- begin inspecting
+
+    event.Records.forEach((item) => {
+      console.log(item);
+    });
+    // -- end inspecting
 
     return;
 };

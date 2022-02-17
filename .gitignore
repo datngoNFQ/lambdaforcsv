@@ -1,0 +1,4 @@
+/tmp/*
+/.serverless
+/.serverless/*
+/.serverless/**

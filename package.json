@@ -4,7 +4,8 @@
   "description": "",
   "main": "handler.js",
   "dependencies": {
-    "fast-csv": "4.3.6"
+    "fast-csv": "4.3.6",
+    "serverless-mysql": "1.5.4"
   },
   "devDependencies": {},
   "scripts": {

@@ -1,0 +1,24 @@
+{
+  "name": "lambdaforcsv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "dependencies": {
+    "fast-csv": "4.3.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/datngoNFQ/lambdaforcsv.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/datngoNFQ/lambdaforcsv/issues"
+  },
+  "homepage": "https://github.com/datngoNFQ/lambdaforcsv#readme"
+}

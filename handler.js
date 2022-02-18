@@ -26,9 +26,30 @@ const insertToDB = async (voucher) => {
 
 module.exports.applyvoucher = async (event) => {
   const data = JSON.parse(event.body);
+  let errResponse = {
+    statusCode: 400,
+    body: ''
+  }
 
-  console.log("Catch- -");
-  console.log("data == ", data);
+  // 1. check for voucher not null
+  // 2. check for customer id not null
+  // try
+  // 3. query voucher from database (with LOCK)
+  // 4. result must be exist, if not, return error
+  // 5. check for field 'use', must be FALSE, if not, return error
+  // 6. If use is TRUE, insert to database
+  // catch
+  // error response const response = {statusCode: 400, body: JSON.stringify({"message": "Failed to get voucher"})}
+  //
+  const {voucher, customer_id} = data;
+  if( !voucher ) {
+    return {...errResponse, body: JSON.stringify({"message": "Param voucher is invalid"})}
+  }
+  if( !customer_id ) {
+    return {...errResponse, body: JSON.stringify({"message": "Param customer_id is invalid"})}
+  }
+
+
   const response = {
     statusCode: 201,
     body: JSON.stringify(data)

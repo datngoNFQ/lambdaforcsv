@@ -27,7 +27,7 @@ module.exports.readS3File = async (event) => {
       const parser = csv
         .parseStream(csvFile, { headers: true })
         .on("data", function (readdata) {
-          console.log('Data parsed from CSV: ', readdata);
+          const { VoucherCode } = readdata;
         })
         .on("end", function () {
           resolve("CSV parsing finished");

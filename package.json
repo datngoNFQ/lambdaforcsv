@@ -5,6 +5,7 @@
   "main": "handler.js",
   "dependencies": {
     "fast-csv": "4.3.6",
+    "moment": "2.29.1",
     "serverless-mysql": "1.5.4"
   },
   "devDependencies": {},

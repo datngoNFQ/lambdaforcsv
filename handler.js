@@ -3,6 +3,7 @@ const AWS = require('aws-sdk')
 const s3 = new AWS.S3()
 const csv = require('@fast-csv/parse');
 const mysql = require('serverless-mysql')();
+const moment = require('moment');
 
 mysql.config({
   // host     : process.env.ENDPOINT, TODO: using config from rdsconfig.json
@@ -11,6 +12,17 @@ mysql.config({
   user     : 'admin',
   password : 'voucher123#' // Proposal: Using AWS secret k-v service
 });
+
+
+const insertToDB = async (voucher) => {
+  const results = await mysql.query('select * from vouchers;');
+  const currentMoment =  moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+
+  let insertresults = await mysql.transaction()
+  .query('INSERT INTO vouchers (voucher_code,created_at) VALUES(?,?)', [voucher,currentMoment])
+  .commit();
+  return insertresults;
+}
 
 module.exports.readS3File = async (event) => {
   const Key = event.Records[0].s3.object.key;
@@ -27,7 +39,8 @@ module.exports.readS3File = async (event) => {
       const parser = csv
         .parseStream(csvFile, { headers: true })
         .on("data", function (readdata) {
-          console.log('Data parsed from CSV: ', readdata);
+          const { VoucherCode } = readdata;
+          insertToDB(VoucherCode);
         })
         .on("end", function () {
           resolve("CSV parsing finished");
@@ -38,19 +51,11 @@ module.exports.readS3File = async (event) => {
     });
 
     try {
-      await csvParser;
-      // BEGIN RDS
-      console.log('BEGIN mysql ... ');
+      console.log('Begin processing');
       await mysql.connect();
-      console.log('BEGIN query');
-      const results = await mysql.query('select * from vouchers;');
+      await csvParser;
       await mysql.end();
-      console.log('END query');
-      console.log(results);
-      const results1 = await mysql.query('select CURRENT_TIMESTAMP');
-      console.log('END query for current timestamp');
-      console.log(results1);
-      // END RDS
+      console.log('End processing');
     } catch (error) {
       console.log("Get Error: ", error);
     }

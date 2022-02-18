@@ -2,6 +2,15 @@
 const AWS = require('aws-sdk')
 const s3 = new AWS.S3()
 const csv = require('@fast-csv/parse');
+const mysql = require('serverless-mysql')();
+
+mysql.config({
+  // host     : process.env.ENDPOINT, TODO: using config from rdsconfig.json
+  host     : 'voucherdb-instance.coc4ywccjzkl.us-east-1.rds.amazonaws.com',
+  database : 'voucher',
+  user     : 'admin',
+  password : 'voucher123#' // Proposal: Using AWS secret k-v service
+});
 
 module.exports.readS3File = async (event) => {
   const Key = event.Records[0].s3.object.key;
@@ -30,9 +39,22 @@ module.exports.readS3File = async (event) => {
 
     try {
       await csvParser;
+      // BEGIN RDS
+      console.log('BEGIN mysql ... ');
+      await mysql.connect();
+      console.log('BEGIN query');
+      const results = await mysql.query('select * from vouchers;');
+      await mysql.end();
+      console.log('END query');
+      console.log(results);
+      const results1 = await mysql.query('select CURRENT_TIMESTAMP');
+      console.log('END query for current timestamp');
+      console.log(results1);
+      // END RDS
     } catch (error) {
       console.log("Get Error: ", error);
     }
+
     return;
 };
 // TODO

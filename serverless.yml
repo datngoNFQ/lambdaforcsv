@@ -36,7 +36,6 @@ provider:
       Resource:
         - "arn:aws:s3:::${file(config.json):S3_BUCKET}/*"
   profile: serverlessUser
-
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
@@ -72,6 +71,16 @@ provider:
 functions:
   uploader:
     handler: functions/handler.readS3File
+    # vpc:
+    #   securityGroupIds:
+    #     - sg-0384a86953efdda90
+    #   subnetIds:
+    #     - subnet-026827ebee6c23901
+    #     - subnet-0cafc3b0ab9129eb6
+    #     - subnet-0a73d805676a9a603
+    #     - subnet-0cb125485271e8a22
+    #     - subnet-0b1788c3dd8a27134
+    #     - subnet-06d4316c89aed0986
     events:
       - s3:
           bucket: ${file(config.json):S3_BUCKET}

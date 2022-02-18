@@ -24,6 +24,17 @@ const insertToDB = async (voucher) => {
   return insertresults;
 }
 
+module.exports.applyvoucher = async (event) => {
+  const data = JSON.parse(event.body);
+
+  console.log("Catch- -");
+  console.log("data == ", data);
+  const response = {
+    statusCode: 201,
+    body: JSON.stringify(data)
+  }
+  return response;
+}
 module.exports.readS3File = async (event) => {
   const Key = event.Records[0].s3.object.key;
 

@@ -16,15 +16,12 @@ mysql.config({
 
 const insertToDB = async (voucher) => {
   const results = await mysql.query('select * from vouchers;');
-  console.log("es6 helper == ", voucher);
-  console.log("query result in subfunc == ", results);
   const currentMoment =  moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-  console.log("currentMoment == ", currentMoment);
 
   let insertresults = await mysql.transaction()
   .query('INSERT INTO vouchers (voucher_code,created_at) VALUES(?,?)', [voucher,currentMoment])
-  .commit()
-  console.log("insertresult == ", insertresults);
+  .commit();
+  return insertresults;
 }
 
 module.exports.readS3File = async (event) => {
@@ -54,20 +51,11 @@ module.exports.readS3File = async (event) => {
     });
 
     try {
-      // BEGIN RDS
-      console.log('BEGIN mysql ... ');
+      console.log('Begin processing');
       await mysql.connect();
       await csvParser;
-
-      // console.log('BEGIN query');
-      // const results = await mysql.query('select * from vouchers;');
-      // console.log('END query');
-      // console.log(results);
-      // const results1 = await mysql.query('select CURRENT_TIMESTAMP');
-      // console.log('END query for current timestamp');
-      // console.log(results1);
       await mysql.end();
-      // END RDS
+      console.log('End processing');
     } catch (error) {
       console.log("Get Error: ", error);
     }

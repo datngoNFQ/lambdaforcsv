@@ -31,8 +31,8 @@ module.exports.applyvoucher = async (event) => {
     body: ''
   }
 
-  // 1. check for voucher not null
-  // 2. check for customer id not null
+  // DONE 1. check for voucher not null
+  // DONE 2. check for customer id not null
   // try
   // 3. query voucher from database (with LOCK)
   // 4. result must be exist, if not, return error
@@ -48,6 +48,23 @@ module.exports.applyvoucher = async (event) => {
   if( !customer_id ) {
     return {...errResponse, body: JSON.stringify({"message": "Param customer_id is invalid"})}
   }
+
+  console.log('Begin processing');
+  await mysql.connect();
+  let queryResults = await mysql.transaction()
+  .query('SELECT * FROM vouchers WHERE voucher_code = ? and used = ? LIMIT 1 FOR UPDATE', [voucher, false])
+  .commit();
+
+  if (queryResults.length == 0) {
+    return {...errResponse, body: JSON.stringify({"message": "Voucher is invalid"})}
+  }
+
+  const jsonResults=JSON.parse(JSON.stringify(queryResults[0][0]))
+
+  console.log('jsonResults = ', jsonResults);
+
+  await mysql.end();
+  console.log('End processing');
 
 
   const response = {

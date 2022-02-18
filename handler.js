@@ -3,6 +3,7 @@ const AWS = require('aws-sdk')
 const s3 = new AWS.S3()
 const csv = require('@fast-csv/parse');
 const mysql = require('serverless-mysql')();
+const moment = require('moment');
 
 mysql.config({
   // host     : process.env.ENDPOINT, TODO: using config from rdsconfig.json
@@ -11,6 +12,20 @@ mysql.config({
   user     : 'admin',
   password : 'voucher123#' // Proposal: Using AWS secret k-v service
 });
+
+
+const insertToDB = async (voucher) => {
+  const results = await mysql.query('select * from vouchers;');
+  console.log("es6 helper == ", voucher);
+  console.log("query result in subfunc == ", results);
+  const currentMoment =  moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+  console.log("currentMoment == ", currentMoment);
+
+  let insertresults = await mysql.transaction()
+  .query('INSERT INTO vouchers (voucher_code,created_at) VALUES(?,?)', [voucher,currentMoment])
+  .commit()
+  console.log("insertresult == ", insertresults);
+}
 
 module.exports.readS3File = async (event) => {
   const Key = event.Records[0].s3.object.key;
@@ -28,6 +43,7 @@ module.exports.readS3File = async (event) => {
         .parseStream(csvFile, { headers: true })
         .on("data", function (readdata) {
           const { VoucherCode } = readdata;
+          insertToDB(VoucherCode);
         })
         .on("end", function () {
           resolve("CSV parsing finished");
@@ -38,18 +54,19 @@ module.exports.readS3File = async (event) => {
     });
 
     try {
-      await csvParser;
       // BEGIN RDS
       console.log('BEGIN mysql ... ');
       await mysql.connect();
-      console.log('BEGIN query');
-      const results = await mysql.query('select * from vouchers;');
+      await csvParser;
+
+      // console.log('BEGIN query');
+      // const results = await mysql.query('select * from vouchers;');
+      // console.log('END query');
+      // console.log(results);
+      // const results1 = await mysql.query('select CURRENT_TIMESTAMP');
+      // console.log('END query for current timestamp');
+      // console.log(results1);
       await mysql.end();
-      console.log('END query');
-      console.log(results);
-      const results1 = await mysql.query('select CURRENT_TIMESTAMP');
-      console.log('END query for current timestamp');
-      console.log(results1);
       // END RDS
     } catch (error) {
       console.log("Get Error: ", error);

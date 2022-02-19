@@ -86,6 +86,13 @@ functions:
           bucket: ${file(config.json):S3_BUCKET}
           event: s3:ObjectCreated:*
           existing: true
+  applyvoucher:
+    handler: functions/handler.applyvoucher
+    events:
+      - http:
+          path: voucher
+          method: post
+          cors: true
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)

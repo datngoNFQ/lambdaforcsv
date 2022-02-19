@@ -46,7 +46,11 @@ module.exports.applyvoucher = async (event) => {
 
   let results = await mysql.transaction()
   .query('SELECT * FROM vouchers WHERE voucher_code = ? and used = ? LIMIT 1 FOR UPDATE', [voucher, false])
-  .query('UPDATE vouchers SET customer_id=?, used = ?, updated_at=? WHERE voucher_code = ?', [customer_id, true, currentMoment, voucher])
+  // .query('UPDATE vouchers SET customer_id=?, used = ?, updated_at=? WHERE voucher_code = ?', [customer_id, true, currentMoment, voucher])
+  .query((r) => {
+    console.log("r == ",r);
+    return ['UPDATE vouchers SET customer_id=?, used = ?, updated_at=? WHERE voucher_code = ?', [customer_id, true, currentMoment, voucher]];
+  })
   .rollback(e => {
     console.log('DB record update error: ', e);
     return {...errResponse, body: JSON.stringify({"message": "Param voucher is invalid"})}

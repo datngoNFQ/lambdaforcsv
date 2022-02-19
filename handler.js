@@ -49,22 +49,36 @@ module.exports.applyvoucher = async (event) => {
   // .query('UPDATE vouchers SET customer_id=?, used = ?, updated_at=? WHERE voucher_code = ?', [customer_id, true, currentMoment, voucher])
   .query((r) => {
     console.log("r == ",r);
-    return ['UPDATE vouchers SET customer_id=?, used = ?, updated_at=? WHERE voucher_code = ?', [customer_id, true, currentMoment, voucher]];
+    if (r.length === 0) {
+      errResponse = {
+        statusCode: 502,
+        body: JSON.stringify({"message": "Voucher is not valid or had been used!"})
+      };
+      return null;
+    }
+    else {
+      return ['UPDATE vouchers SET customer_id=?, used = ?, updated_at=? WHERE voucher_code = ?', [customer_id, true, currentMoment, voucher]];
+    }
   })
   .rollback(e => {
     console.log('DB record update error: ', e);
-    return {...errResponse, body: JSON.stringify({"message": "Param voucher is invalid"})}
+    errResponse = {
+      statusCode: 502,
+      body: JSON.stringify({"message": "Param voucher is invalid"})}
   })
   .commit();
 
   await mysql.end();
   console.log('End processing');
-
+  console.log('errResponse == ', errResponse);
+  if (errResponse.statusCode === 502) {
+    return errResponse;
+  };
 
   const response = {
     statusCode: 201,
     body: JSON.stringify(data)
-  }
+  };
   return response;
 }
 module.exports.readS3File = async (event) => {

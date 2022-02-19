@@ -94,6 +94,13 @@ functions:
           path: voucher
           method: post
           cors: true
+  uploadcsv:
+    handler: functions/handler.uploadcsv
+    events:
+      - http:
+          path: csv
+          method: post
+          cors: true
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)

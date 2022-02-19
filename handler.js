@@ -24,6 +24,13 @@ const insertToDB = async (voucher) => {
   return insertresults;
 }
 
+module.exports.uploadcsv = async (event) => {
+  const response = {
+    statusCode: 201,
+    body: JSON.stringify({"message": "File is uploaded!"})
+  };
+  return response;
+}
 module.exports.applyvoucher = async (event) => {
   const data = JSON.parse(event.body);
   let errResponse = {

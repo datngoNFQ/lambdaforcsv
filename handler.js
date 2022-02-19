@@ -4,6 +4,7 @@ const s3 = new AWS.S3()
 const csv = require('@fast-csv/parse');
 const mysql = require('serverless-mysql')();
 const moment = require('moment');
+const multipart = require('aws-lambda-multipart-parser');
 
 mysql.config({
   // host     : process.env.ENDPOINT, TODO: using config from rdsconfig.json
@@ -26,6 +27,21 @@ const insertToDB = async (voucher) => {
 
 module.exports.uploadcsv = async (event) => {
   console.log('event == ', event);
+  console.log('event body == ', event.body);
+  console.log('event typeof body == ', typeof event.body);
+  // console.log('event.body.filename == ', event.body.filename); // undefined
+  // const data = JSON.parse(event.body);
+  // console.log('data == ', data);
+  try {
+    // const data = JSON.parse(event.body);
+    const spotText = true; // all text files are present in text for after parsing
+    const deta = multipart.parse(event, spotText);
+    console.log("deta == ");
+    console.log(deta);
+
+  } catch(e) {
+    console.log(e);
+  }
 
   const response = {
     statusCode: 201,

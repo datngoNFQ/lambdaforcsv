@@ -152,3 +152,11 @@ resources:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+plugins:
+  - serverless-apigw-binary
+
+custom:
+  apigwBinary:
+    types: #list of mime-types
+      - "image/jpeg"
+      - "text/html"

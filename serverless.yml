@@ -33,6 +33,7 @@ provider:
       Action:
         - "s3:GetObject"
         - "s3:GetObjectVersion"
+        - "s3:PutObject"
       Resource:
         - "arn:aws:s3:::${file(config.json):S3_BUCKET}/*"
   profile: serverlessUser

@@ -31,16 +31,6 @@ module.exports.applyvoucher = async (event) => {
     body: ''
   }
 
-  // DONE 1. check for voucher not null
-  // DONE 2. check for customer id not null
-  // try
-  // 3. query voucher from database (with LOCK)
-  // 4. result must be exist, if not, return error
-  // 5. check for field 'use', must be FALSE, if not, return error
-  // 6. If use is TRUE, insert to database
-  // catch
-  // error response const response = {statusCode: 400, body: JSON.stringify({"message": "Failed to get voucher"})}
-  //
   const {voucher, customer_id} = data;
   if( !voucher ) {
     return {...errResponse, body: JSON.stringify({"message": "Param voucher is invalid"})}
@@ -51,27 +41,17 @@ module.exports.applyvoucher = async (event) => {
 
   console.log('Begin processing');
   await mysql.connect();
-  /*
-
-  let queryResults = await mysql.transaction()
-  .query('SELECT * FROM vouchers WHERE voucher_code = ? and used = ? LIMIT 1 FOR UPDATE', [voucher, false])
-  .commit();
-
-  if (queryResults.length == 0) {
-    return {...errResponse, body: JSON.stringify({"message": "Voucher is invalid"})}
-  }
-
-  const jsonResults=JSON.parse(JSON.stringify(queryResults[0][0]))
-
-  console.log('jsonResults = ', jsonResults);*/
   const connection = mysql.getClient();
   const currentMoment =  moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 
   let results = await mysql.transaction()
   .query('SELECT * FROM vouchers WHERE voucher_code = ? and used = ? LIMIT 1 FOR UPDATE', [voucher, false])
   .query('UPDATE vouchers SET customer_id=?, used = ?, updated_at=? WHERE voucher_code = ?', [customer_id, true, currentMoment, voucher])
-  .rollback(e => { /* do something with the error */ }) // optional
-  .commit(); // execute the queries
+  .rollback(e => {
+    console.log('DB record update error: ', e);
+    return {...errResponse, body: JSON.stringify({"message": "Param voucher is invalid"})}
+  })
+  .commit();
 
   await mysql.end();
   console.log('End processing');

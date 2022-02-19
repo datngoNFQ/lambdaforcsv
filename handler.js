@@ -51,6 +51,8 @@ module.exports.applyvoucher = async (event) => {
 
   console.log('Begin processing');
   await mysql.connect();
+  /*
+
   let queryResults = await mysql.transaction()
   .query('SELECT * FROM vouchers WHERE voucher_code = ? and used = ? LIMIT 1 FOR UPDATE', [voucher, false])
   .commit();
@@ -61,7 +63,15 @@ module.exports.applyvoucher = async (event) => {
 
   const jsonResults=JSON.parse(JSON.stringify(queryResults[0][0]))
 
-  console.log('jsonResults = ', jsonResults);
+  console.log('jsonResults = ', jsonResults);*/
+  const connection = mysql.getClient();
+  const currentMoment =  moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+
+  let results = await mysql.transaction()
+  .query('SELECT * FROM vouchers WHERE voucher_code = ? and used = ? LIMIT 1 FOR UPDATE', [voucher, false])
+  .query('UPDATE vouchers SET customer_id=?, used = ?, updated_at=? WHERE voucher_code = ?', [customer_id, true, currentMoment, voucher])
+  .rollback(e => { /* do something with the error */ }) // optional
+  .commit(); // execute the queries
 
   await mysql.end();
   console.log('End processing');

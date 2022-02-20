@@ -33,6 +33,7 @@ provider:
       Action:
         - "s3:GetObject"
         - "s3:GetObjectVersion"
+        - "s3:PutObject"
       Resource:
         - "arn:aws:s3:::${file(config.json):S3_BUCKET}/*"
   profile: serverlessUser
@@ -93,6 +94,13 @@ functions:
           path: voucher
           method: post
           cors: true
+  uploadcsv:
+    handler: functions/handler.uploadcsv
+    events:
+      - http:
+          path: csv
+          method: post
+          cors: true
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)
@@ -144,3 +152,11 @@ resources:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+plugins:
+  - serverless-apigw-binary
+
+custom:
+  apigwBinary:
+    types: #list of mime-types
+      - "image/jpeg"
+      - "text/html"

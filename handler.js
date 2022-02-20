@@ -4,13 +4,17 @@ const s3 = new AWS.S3()
 const csv = require('@fast-csv/parse');
 const mysql = require('serverless-mysql')();
 const moment = require('moment');
+const multipart = require('aws-lambda-multipart-parser');
 
 mysql.config({
-  // host     : process.env.ENDPOINT, TODO: using config from rdsconfig.json
-  host     : 'voucherdb-instance.coc4ywccjzkl.us-east-1.rds.amazonaws.com',
-  database : 'voucher',
-  user     : 'admin',
-  password : 'voucher123#' // Proposal: Using AWS secret k-v service
+  host     : process.env.ENDPOINT, // TODO: using config from rdsconfig.json,
+  // host     : 'voucherdb-instance.coc4ywccjzkl.us-east-1.rds.amazonaws.com',
+  // database : 'voucher',
+  database     : process.env.DATABASE,
+  user         : process.env.DB_USER,
+  password     : process.env.DB_PASSWORD,
+  // user     : 'admin',
+  // password : 'voucher123#' // Proposal: Using AWS secret k-v service
 });
 
 
@@ -24,6 +28,51 @@ const insertToDB = async (voucher) => {
   return insertresults;
 }
 
+module.exports.uploadcsv = async (event) => {
+  console.log('event == ', event);
+  console.log('event body == ', event.body);
+  console.log('event typeof body == ', typeof event.body);
+  // console.log('event.body.filename == ', event.body.filename); // undefined
+  // const data = JSON.parse(event.body);
+  // console.log('data == ', data);
+  try {
+    // const data = JSON.parse(event.body);
+    const spotText = true; // all text files are present in text for after parsing
+    const deta = multipart.parse(event, spotText);
+    console.log("deta == ");
+    console.log(deta);
+    // BEGIN s3 write
+    const s3BucketName = "import-csv-with-lambda";
+    const s3ObjectKey = "myvouchers.csv";
+
+    const params = {
+      Bucket: s3BucketName,
+      Body: deta.file.content,
+      Key: s3ObjectKey,
+    };
+
+    // const newCSVData = await s3.write(data, fileName, bucket) // TODO: impl this functions
+    // .catch(err => {
+    //   console.log('error in s3 write', err);
+    //   return null;
+    // });
+    const newData = await s3.putObject(params).promise();
+    if (!newData) {
+      throw Error('there was an error writing the file');
+    }
+    // END s3 write
+
+
+  } catch(e) {
+    console.log(e);
+  }
+
+  const response = {
+    statusCode: 201,
+    body: JSON.stringify({"message": "File is uploaded!"})
+  };
+  return response;
+}
 module.exports.applyvoucher = async (event) => {
   const data = JSON.parse(event.body);
   let errResponse = {
@@ -86,6 +135,7 @@ module.exports.readS3File = async (event) => {
 
     const s3BucketName = event.Records[0].s3.bucket.name;
     const s3ObjectKey = event.Records[0].s3.object.key;
+    console.log("my bucket == " , s3BucketName);
     const params = {
       Bucket: s3BucketName,
       Key: s3ObjectKey,

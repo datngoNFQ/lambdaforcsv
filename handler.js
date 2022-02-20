@@ -7,11 +7,14 @@ const moment = require('moment');
 const multipart = require('aws-lambda-multipart-parser');
 
 mysql.config({
-  // host     : process.env.ENDPOINT, TODO: using config from rdsconfig.json
-  host     : 'voucherdb-instance.coc4ywccjzkl.us-east-1.rds.amazonaws.com',
-  database : 'voucher',
-  user     : 'admin',
-  password : 'voucher123#' // Proposal: Using AWS secret k-v service
+  host     : process.env.ENDPOINT, // TODO: using config from rdsconfig.json,
+  // host     : 'voucherdb-instance.coc4ywccjzkl.us-east-1.rds.amazonaws.com',
+  // database : 'voucher',
+  database     : process.env.DATABASE,
+  user         : process.env.DB_USER,
+  password     : process.env.DB_PASSWORD,
+  // user     : 'admin',
+  // password : 'voucher123#' // Proposal: Using AWS secret k-v service
 });
 
 

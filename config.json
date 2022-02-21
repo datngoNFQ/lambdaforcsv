@@ -1,5 +1,5 @@
 {
   "REGION": "us-east-1",
   "STAGE": "dev",
-  "S3_BUCKET": "import-csv-with-lambda"
+  "S3_BUCKET": "import-csv-with-lambda-rev1"
 }

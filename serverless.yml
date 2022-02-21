@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: lambdaforcsv
+service: lambdaforcsvrev1
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -115,8 +115,8 @@ functions:
           path: csv
           method: post
           cors: true
-  uploader:
-    handler: lambdas/worker/readS3CSVFile.handler
+  importToDB:
+    handler: lambdas/worker/importToDB.handler
     events:
       - s3:
           bucket: ${file(config.json):S3_BUCKET}

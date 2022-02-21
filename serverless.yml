@@ -78,43 +78,43 @@ functions:
           method: GET
           cors: true
     # handler: handler.hello
-# BEGIN- Tạm thời comment
-# uploader:
-#   handler: functions/handler.readS3File
-# END- Tạm thời comment
-# vpc:
-#   securityGroupIds:
-#     - sg-0384a86953efdda90
-#   subnetIds:
-#     - subnet-026827ebee6c23901
-#     - subnet-0cafc3b0ab9129eb6
-#     - subnet-0a73d805676a9a603
-#     - subnet-0cb125485271e8a22
-#     - subnet-0b1788c3dd8a27134
-#     - subnet-06d4316c89aed0986
-# BEGIN- Tạm thời comment
-# events:
-#   - s3:
-#       bucket: ${file(config.json):S3_BUCKET}
-#       event: s3:ObjectCreated:*
-#       existing: true
-# END- Tạm thời comment
-# BEGIN- Tạm thời comment
-# applyvoucher:
-#   handler: functions/handler.applyvoucher
-#   events:
-#     - http:
-#         path: voucher
-#         method: post
-#         cors: true
-# uploadcsv:
-#   handler: functions/handler.uploadcsv
-#   events:
-#     - http:
-#         path: csv
-#         method: post
-#         cors: true
-# END- Tạm thời comment
+  # BEGIN- Tạm thời comment
+  # uploader:
+  #   handler: functions/handler.readS3File
+  # END- Tạm thời comment
+  # vpc:
+  #   securityGroupIds:
+  #     - sg-0384a86953efdda90
+  #   subnetIds:
+  #     - subnet-026827ebee6c23901
+  #     - subnet-0cafc3b0ab9129eb6
+  #     - subnet-0a73d805676a9a603
+  #     - subnet-0cb125485271e8a22
+  #     - subnet-0b1788c3dd8a27134
+  #     - subnet-06d4316c89aed0986
+  # BEGIN- Tạm thời comment
+  # events:
+  #   - s3:
+  #       bucket: ${file(config.json):S3_BUCKET}
+  #       event: s3:ObjectCreated:*
+  #       existing: true
+  # END- Tạm thời comment
+  # BEGIN- Tạm thời comment
+  # applyvoucher:
+  #   handler: functions/handler.applyvoucher
+  #   events:
+  #     - http:
+  #         path: voucher
+  #         method: post
+  #         cors: true
+  # END- Tạm thời comment
+  uploadcsv:
+    handler: lambdas/worker/uploadCsv.handler
+    events:
+      - http:
+          path: csv
+          method: post
+          cors: true
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)

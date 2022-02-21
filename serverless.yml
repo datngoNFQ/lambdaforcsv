@@ -68,3 +68,7 @@ custom:
     types: #list of mime-types
       - "image/jpeg"
       - "text/html"
+  webpack:
+    includeModules:
+      forceExclude:
+        - aws-sdk

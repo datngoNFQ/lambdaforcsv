@@ -109,12 +109,20 @@ functions:
   #         cors: true
   # END- Tạm thời comment
   uploadcsv:
-    handler: lambdas/worker/uploadCsv.handler
+    handler: lambdas/endpoints/uploadCsv.handler
     events:
       - http:
           path: csv
           method: post
           cors: true
+  uploader:
+    handler: lambdas/worker/readS3CSVFile.handler
+    events:
+      - s3:
+          bucket: ${file(config.json):S3_BUCKET}
+          event: s3:ObjectCreated:*
+          existing: true
+
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)

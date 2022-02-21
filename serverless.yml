@@ -100,13 +100,13 @@ functions:
   #       existing: true
   # END- Tạm thời comment
   # BEGIN- Tạm thời comment
-  # applyvoucher:
-  #   handler: functions/handler.applyvoucher
-  #   events:
-  #     - http:
-  #         path: voucher
-  #         method: post
-  #         cors: true
+  applyvoucher:
+    handler: lambdas/endpoints/applyvoucher.handler
+    events:
+      - http:
+          path: voucher
+          method: post
+          cors: true
   # END- Tạm thời comment
   uploadcsv:
     handler: lambdas/endpoints/uploadCsv.handler

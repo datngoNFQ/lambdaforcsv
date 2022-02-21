@@ -28,6 +28,14 @@ const insertToDB = async (voucher) => {
   return insertresults;
 }
 
+// module.exports.hello = async (event) => {
+//   console.log('hello event == ', event);
+//   console.log('hello event == ', event);
+//   console.log('hello event == ', event);
+//   console.log('hello event == ', event);
+//   console.log('hello event == ', event);
+// };
+
 module.exports.uploadcsv = async (event) => {
   console.log('event == ', event);
   console.log('event body == ', event.body);

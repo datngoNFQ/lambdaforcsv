@@ -7,7 +7,7 @@ frameworkVersion: "2"
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs12.x # LG: why nodejs12 and not 14 ?
   lambdaHashingVersion: 20201221
   stage: ${file(config.json):STAGE}
   region: ${file(config.json):REGION}
@@ -30,7 +30,7 @@ functions:
       - http:
           path: voucher
           method: post
-          cors: true
+          cors: true # LG: is cors necessary?
   uploadcsv:
     handler: lambdas/endpoints/uploadCsv.handler
     events:
@@ -52,13 +52,13 @@ resources:
       Properties:
         BucketName: ${file(config.json):S3_BUCKET}
 plugins:
-  - serverless-apigw-binary
+  - serverless-apigw-binary # LG: what is this for?
   - serverless-webpack
 package:
   individually: true
 custom:
   apigwBinary:
-    types: #list of mime-types
+    types: #list of mime-types # LG: what are these mime types for?
       - "image/jpeg"
       - "text/html"
   webpack:

@@ -24,13 +24,6 @@ provider:
   profile: serverlessUser
 
 functions:
-  getUser:
-    handler: lambdas/endpoints/getUser.handler
-    events:
-      - http:
-          path: getUser/
-          method: GET
-          cors: true
   applyvoucher:
     handler: lambdas/endpoints/applyvoucher.handler
     events:
